@@ -17,7 +17,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       AllowAutoHide="False"
                       ScrollChanged="HandleScrollViewerScrollChanged">
-            <ItemsControl HorizontalAlignment="Center" ItemsSource="{Binding Images}">
+            <ItemsControl HorizontalAlignment="Center" ItemsSource="{Binding LoadedImages}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Margin="24"
