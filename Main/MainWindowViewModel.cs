@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -11,33 +12,32 @@ namespace GogGalaxyCardViewer.Main;
 public partial class MainWindowViewModel(IMessenger messenger)
     : ObservableRecipient(messenger), IRecipient<ImageFoundMessage>
 {
-    private const int ReceiveThreshold = 200;
-    private const int LoadAmount = 50;
-
     private readonly List<string> _allImages = [];
+    private string? _currentFilter;
 
-    public ObservableCollection<string> LoadedImages { get; } = [];
-
+    public ObservableCollection<string> FilteredImages { get; private set; } = [];
 
     public void Receive(ImageFoundMessage message)
     {
         _allImages.Add(message.Path);
 
-        if (LoadedImages.Count < ReceiveThreshold)
-            LoadedImages.Add(message.Path);
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (_currentFilter == null || message.Path.Contains(_currentFilter))
+                FilteredImages.Add(message.Path);
+        }, DispatcherPriority.ContextIdle);
     }
 
     [RelayCommand]
     private void FilterImages(string? filter)
     {
-    }
+        _currentFilter = filter;
 
-    public void LoadMoreItems()
-    {
-        var limit = Math.Min(_allImages.Count, LoadedImages.Count + LoadAmount);
+        FilteredImages = _currentFilter == null
+            ? new ObservableCollection<string>(_allImages)
+            : new ObservableCollection<string>(_allImages.Where(p => p.Contains(_currentFilter)));
 
-        for (var i = LoadedImages.Count; i < limit; i++)
-            LoadedImages.Add(_allImages[i]);
+        OnPropertyChanged(nameof(FilteredImages));
     }
 
     protected override void OnActivated()

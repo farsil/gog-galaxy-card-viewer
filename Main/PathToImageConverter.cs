@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
@@ -11,6 +12,8 @@ public sealed class PathToImageConverter : IValueConverter
 {
     public static readonly PathToImageConverter Instance = new();
 
+    private static readonly Dictionary<string, Bitmap> Cache = new();
+
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value == null) return null;
@@ -22,7 +25,10 @@ public sealed class PathToImageConverter : IValueConverter
 
         try
         {
-            return new Bitmap(path);
+            if (!Cache.ContainsKey(path))
+                Cache[path] = new Bitmap(path);
+
+            return Cache[path];
         }
         catch (Exception ex)
         {

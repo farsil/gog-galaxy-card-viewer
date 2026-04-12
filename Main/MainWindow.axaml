@@ -14,10 +14,46 @@
     </Window.Resources>
     <DockPanel>
         <main:SyntheticTitlebar DockPanel.Dock="Top" />
+        <StackPanel DockPanel.Dock="Top"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Spacing="16">
+            <Button Content="All"
+                    Padding="16 6"
+                    Command="{Binding FilterImagesCommand}"
+                    CommandParameter="{x:Null}" />
+            <Button Content="Epic"
+                    Padding="16 6"
+                    Command="{Binding FilterImagesCommand}"
+                    CommandParameter="epic" />
+            <Button Content="Generic"
+                    Padding="16 6"
+                    Command="{Binding FilterImagesCommand}"
+                    CommandParameter="generic" />
+            <Button Content="GOG"
+                    Padding="16 6"
+                    Command="{Binding FilterImagesCommand}"
+                    CommandParameter="gog" />
+            <Button Content="Origin"
+                    Padding="16 6"
+                    Command="{Binding FilterImagesCommand}"
+                    CommandParameter="origin" />
+            <Button Content="Steam"
+                    Padding="16 6"
+                    Command="{Binding FilterImagesCommand}"
+                    CommandParameter="steam" />
+            <Button Content="Uplay"
+                    Padding="16 6"
+                    Command="{Binding FilterImagesCommand}"
+                    CommandParameter="uplay" />
+            <Button Content="User"
+                    Padding="16 6"
+                    Command="{Binding FilterImagesCommand}"
+                    CommandParameter="user" />
+        </StackPanel>
         <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      AllowAutoHide="False"
-                      ScrollChanged="HandleScrollViewerScrollChanged">
-            <ItemsControl HorizontalAlignment="Center" ItemsSource="{Binding LoadedImages}">
+                      AllowAutoHide="False">
+            <ItemsControl HorizontalAlignment="Center" ItemsSource="{Binding FilteredImages}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Margin="24"

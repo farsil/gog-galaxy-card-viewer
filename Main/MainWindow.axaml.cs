@@ -26,15 +26,6 @@ public partial class MainWindow : Window
         if (DataContext is MainWindowViewModel vm) vm.IsActive = false;
     }
 
-    private void HandleScrollViewerScrollChanged(object? sender, ScrollChangedEventArgs e)
-    {
-        if (sender is not ScrollViewer sv) return;
-        if (DataContext is not MainWindowViewModel vm) return;
-
-        var distanceFromBottom = sv.Extent.Height - sv.Viewport.Height - sv.Offset.Y;
-        if (distanceFromBottom < 100) vm.LoadMoreItems();
-    }
-
     private async void HandleImagePointerPressed(object? sender, PointerPressedEventArgs e)
     {
         try
@@ -50,7 +41,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Unable to initiate drag and drop: " + ex.Message);
+            Console.WriteLine("Unable to perform drag and drop: " + ex.Message);
         }
     }
 }
