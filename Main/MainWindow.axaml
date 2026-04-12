@@ -17,7 +17,8 @@
         <StackPanel DockPanel.Dock="Top"
                     Orientation="Horizontal"
                     HorizontalAlignment="Center"
-                    Spacing="16">
+                    Spacing="16"
+                    Margin="0 0 0 24">
             <Button Content="All"
                     Padding="16 6"
                     Command="{Binding FilterImagesCommand}"
@@ -56,7 +57,7 @@
             <ItemsControl HorizontalAlignment="Center" ItemsSource="{Binding FilteredImages}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Margin="24"
+                        <WrapPanel Margin="24 0 24 24"
                                    LineSpacing="32"
                                    ItemSpacing="32" />
                     </ItemsPanelTemplate>
