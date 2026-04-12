@@ -23,4 +23,13 @@ public partial class MainWindow : Window
 
         if (DataContext is MainWindowViewModel vm) vm.IsActive = false;
     }
+
+    private void HandleScrollViewerScrollChanged(object? sender, ScrollChangedEventArgs e)
+    {
+        if (sender is not ScrollViewer sv) return;
+        if (DataContext is not MainWindowViewModel vm) return;
+
+        var distanceFromBottom = sv.Extent.Height - sv.Viewport.Height - sv.Offset.Y;
+        if (distanceFromBottom < 100) vm.LoadMoreItems();
+    }
 }
