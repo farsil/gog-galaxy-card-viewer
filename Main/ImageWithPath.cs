@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -11,6 +12,8 @@ public sealed class ImageWithPath : Image
     public static readonly StyledProperty<string> PathProperty =
         AvaloniaProperty.Register<ImageWithPath, string>(nameof(Path));
 
+    private static readonly Dictionary<string, Bitmap> Cache = [];
+
     public string Path
     {
         get => GetValue(PathProperty);
@@ -21,7 +24,12 @@ public sealed class ImageWithPath : Image
     {
         base.OnPropertyChanged(change);
 
-        if (change.Property == PathProperty) Source = new Bitmap(Path);
+        if (change.Property == PathProperty)
+        {
+            if (!Cache.ContainsKey(Path))
+                Cache[Path] = new Bitmap(Path);
+            Source = Cache[Path];
+        }
     }
 
     protected override async void OnPointerPressed(PointerPressedEventArgs e)
