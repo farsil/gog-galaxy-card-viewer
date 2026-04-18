@@ -11,6 +11,7 @@ namespace GogGalaxyCardViewer.Startup;
 public sealed class App : Application
 {
     private static readonly StrongReferenceMessenger Messenger = StrongReferenceMessenger.Default;
+    private static readonly Dispatcher Dispatcher = Dispatcher.UIThread;
 
     private static MainWindow CreateWindow()
     {
@@ -18,7 +19,8 @@ public sealed class App : Application
         {
             DataContext = new MainWindowViewModel(
                 Messenger,
-                new AssetScanner(Messenger, Dispatcher.UIThread)
+                Dispatcher,
+                new AssetScanner(Messenger, Dispatcher)
             )
         };
     }

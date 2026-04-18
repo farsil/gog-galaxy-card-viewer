@@ -9,7 +9,7 @@ using GogGalaxyCardViewer.Scan;
 
 namespace GogGalaxyCardViewer.Main;
 
-public partial class MainWindowViewModel(IMessenger messenger, IAssetScanner assetScanner)
+public partial class MainWindowViewModel(IMessenger messenger, IDispatcher dispatcher, IAssetScanner assetScanner)
     : ObservableRecipient(messenger), IRecipient<VerticalCoverFoundMessage>
 {
     private readonly List<string> _allImages = [];
@@ -21,7 +21,7 @@ public partial class MainWindowViewModel(IMessenger messenger, IAssetScanner ass
     {
         _allImages.Add(message.VerticalCover.Path);
 
-        Dispatcher.UIThread.Post(() =>
+        dispatcher.Post(() =>
         {
             if (_currentFilter == null || message.VerticalCover.Path.Contains(_currentFilter))
                 FilteredImages.Add(message.VerticalCover.Path);
