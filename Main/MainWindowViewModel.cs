@@ -9,7 +9,7 @@ using GogGalaxyCardViewer.Scan;
 
 namespace GogGalaxyCardViewer.Main;
 
-public partial class MainWindowViewModel(IMessenger messenger)
+public partial class MainWindowViewModel(IMessenger messenger, IAssetScanner assetScanner)
     : ObservableRecipient(messenger), IRecipient<VerticalCoverFoundMessage>
 {
     private readonly List<string> _allImages = [];
@@ -44,13 +44,14 @@ public partial class MainWindowViewModel(IMessenger messenger)
     {
         base.OnActivated();
 
-        Messenger.Send(new ImageScannerStartRequestMessage());
+        assetScanner.Start();
     }
 
     protected override void OnDeactivated()
     {
         base.OnDeactivated();
 
-        Messenger.Send(new ImageScannerStopRequestMessage());
+        assetScanner.RequestStop();
+        assetScanner.Join();
     }
 }

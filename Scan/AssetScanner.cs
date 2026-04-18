@@ -7,7 +7,21 @@ using Microsoft.Data.Sqlite;
 
 namespace GogGalaxyCardViewer.Scan;
 
-public class AssetScanner
+public sealed class VerticalCoverFoundMessage(VerticalCover verticalCover)
+{
+    public VerticalCover VerticalCover => verticalCover;
+}
+
+public interface IAssetScanner
+{
+    public void Start();
+
+    public void RequestStop();
+
+    public void Join();
+}
+
+public sealed class AssetScanner : IAssetScanner
 {
     private const int VerticalCoverTypeId = 3;
     private const int TitleTypeId = 15;
@@ -42,14 +56,14 @@ public class AssetScanner
         _thread.Start();
     }
 
-    public void Join()
-    {
-        _thread.Join();
-    }
-
     public void RequestStop()
     {
         _shouldStop = true;
+    }
+
+    public void Join()
+    {
+        _thread.Join();
     }
 
     private void Run()
