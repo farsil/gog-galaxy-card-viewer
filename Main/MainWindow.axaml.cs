@@ -23,9 +23,4 @@ public partial class MainWindow : Window
 
         if (DataContext is MainWindowViewModel vm) vm.IsActive = false;
     }
-
-    private void HandleVendorButtonClick(object? sender, RoutedEventArgs e)
-    {
-        ScrollViewer.ScrollToHome();
-    }
 }

@@ -2,21 +2,24 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using GogGalaxyCardViewer.Scan;
 
 namespace GogGalaxyCardViewer.Main;
 
-public partial class MainWindowViewModel(IMessenger messenger, IDispatcher dispatcher, IAssetScanner assetScanner)
+public partial class MainWindowViewModel(IMessenger messenger, IAssetScanner assetScanner)
     : ObservableRecipient(messenger), IRecipient<VerticalCoverFoundMessage>
 {
+    private const int SearchResultsMax = 100;
+
     private readonly List<VerticalCover> _allCovers = [];
-    private string? _currentVendor;
 
     public ObservableCollection<VerticalCover> SearchResults { get; private set; } = [];
+
+    [ObservableProperty] public partial int PossibleResultsCount { get; set; }
+
+    [ObservableProperty] public partial int ActualResultsCount { get; set; }
 
     public string? SearchText
     {
@@ -25,7 +28,14 @@ public partial class MainWindowViewModel(IMessenger messenger, IDispatcher dispa
         {
             if (field == value) return;
             field = value;
-            UpdateSearchResults();
+
+            var allSearchResults = _allCovers.Where(ShouldBeInResults).ToList();
+
+            SearchResults = new ObservableCollection<VerticalCover>(allSearchResults.Take(SearchResultsMax));
+            OnPropertyChanged(nameof(SearchResults));
+
+            PossibleResultsCount = allSearchResults.Count;
+            ActualResultsCount = SearchResults.Count;
         }
     }
 
@@ -33,32 +43,17 @@ public partial class MainWindowViewModel(IMessenger messenger, IDispatcher dispa
     {
         _allCovers.Add(message.VerticalCover);
 
-        dispatcher.Post(() =>
-        {
-            if (ShouldCoverBeInResults(message.VerticalCover))
-                SearchResults.Add(message.VerticalCover);
-        }, DispatcherPriority.ContextIdle);
+        if (ShouldBeInResults(message.VerticalCover) && SearchResults.Count < SearchResultsMax)
+            SearchResults.Add(message.VerticalCover);
+
+        PossibleResultsCount = _allCovers.Count;
+        ActualResultsCount = SearchResults.Count;
     }
 
-    private bool ShouldCoverBeInResults(VerticalCover cover)
+    private bool ShouldBeInResults(VerticalCover cover)
     {
-        if (_currentVendor != null && cover.Vendor != _currentVendor) return false;
         return SearchText == null ||
                cover.GameTitle.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase);
-    }
-
-    private void UpdateSearchResults()
-    {
-        SearchResults = new ObservableCollection<VerticalCover>(_allCovers.Where(ShouldCoverBeInResults).Take(100));
-        OnPropertyChanged(nameof(SearchResults));
-    }
-
-    [RelayCommand]
-    private void FilterImagesByVendor(string? vendor)
-    {
-        if (vendor == _currentVendor) return;
-        _currentVendor = vendor;
-        UpdateSearchResults();
     }
 
     protected override void OnActivated()

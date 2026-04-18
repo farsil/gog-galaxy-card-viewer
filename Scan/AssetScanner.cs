@@ -109,7 +109,6 @@ public sealed class AssetScanner : IAssetScanner
             var verticalCover = new VerticalCover
             {
                 GameTitle = title,
-                Vendor = vendor,
                 Path = cardPath
             };
 

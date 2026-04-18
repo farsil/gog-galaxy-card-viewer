@@ -11,52 +11,10 @@
         Height="800">
     <DockPanel>
         <main:SyntheticTitlebar DockPanel.Dock="Top" />
-        <StackPanel DockPanel.Dock="Top"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Center"
-                    Spacing="16"
-                    Margin="0 0 0 24">
-            <Button Content="All"
-                    Padding="16 6"
-                    Click="HandleVendorButtonClick"
-                    Command="{Binding FilterImagesByVendorCommand}"
-                    CommandParameter="{x:Null}" />
-            <Button Content="Epic"
-                    Padding="16 6"
-                    Click="HandleVendorButtonClick"
-                    Command="{Binding FilterImagesByVendorCommand}"
-                    CommandParameter="epic" />
-            <Button Content="Generic"
-                    Padding="16 6"
-                    Click="HandleVendorButtonClick"
-                    Command="{Binding FilterImagesByVendorCommand}"
-                    CommandParameter="generic" />
-            <Button Content="GOG"
-                    Padding="16 6"
-                    Click="HandleVendorButtonClick"
-                    Command="{Binding FilterImagesByVendorCommand}"
-                    CommandParameter="gog" />
-            <Button Content="Origin"
-                    Padding="16 6"
-                    Click="HandleVendorButtonClick"
-                    Command="{Binding FilterImagesByVendorCommand}"
-                    CommandParameter="origin" />
-            <Button Content="Steam"
-                    Padding="16 6"
-                    Click="HandleVendorButtonClick"
-                    Command="{Binding FilterImagesByVendorCommand}"
-                    CommandParameter="steam" />
-            <Button Content="Uplay"
-                    Padding="16 6"
-                    Click="HandleVendorButtonClick"
-                    Command="{Binding FilterImagesByVendorCommand}"
-                    CommandParameter="uplay" />
-            <Button Content="User"
-                    Padding="16 6"
-                    Click="HandleVendorButtonClick"
-                    Command="{Binding FilterImagesByVendorCommand}"
-                    CommandParameter="user" />
-        </StackPanel>
+        <main:ResultsText DockPanel.Dock="Top"
+                          HorizontalAlignment="Center"
+                          CurrentCount="{Binding ActualResultsCount}"
+                          MaxCount="{Binding PossibleResultsCount}" />
         <TextBox DockPanel.Dock="Bottom"
                  Width="300"
                  HorizontalAlignment="Center"
@@ -70,7 +28,7 @@
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel x:Name="Panel"
-                                   Margin="24 0 24 24"
+                                   Margin="24"
                                    LineSpacing="32"
                                    ItemSpacing="32" />
                     </ItemsPanelTemplate>
