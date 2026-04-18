@@ -10,21 +10,21 @@ using GogGalaxyCardViewer.Scan;
 namespace GogGalaxyCardViewer.Main;
 
 public partial class MainWindowViewModel(IMessenger messenger)
-    : ObservableRecipient(messenger), IRecipient<ImageFoundMessage>
+    : ObservableRecipient(messenger), IRecipient<VerticalCoverFoundMessage>
 {
     private readonly List<string> _allImages = [];
     private string? _currentFilter;
 
     public ObservableCollection<string> FilteredImages { get; private set; } = [];
 
-    public void Receive(ImageFoundMessage message)
+    public void Receive(VerticalCoverFoundMessage message)
     {
-        _allImages.Add(message.Path);
+        _allImages.Add(message.VerticalCover.Path);
 
         Dispatcher.UIThread.Post(() =>
         {
-            if (_currentFilter == null || message.Path.Contains(_currentFilter))
-                FilteredImages.Add(message.Path);
+            if (_currentFilter == null || message.VerticalCover.Path.Contains(_currentFilter))
+                FilteredImages.Add(message.VerticalCover.Path);
         }, DispatcherPriority.ContextIdle);
     }
 

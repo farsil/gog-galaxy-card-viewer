@@ -1,8 +1,8 @@
 ﻿namespace GogGalaxyCardViewer.Scan;
 
-public sealed class ImageFoundMessage(string path)
+public sealed class VerticalCoverFoundMessage(VerticalCover verticalCover)
 {
-    public string Path => path;
+    public VerticalCover VerticalCover => verticalCover;
 }
 
 public sealed class ImageScannerStartRequestMessage;

@@ -10,13 +10,13 @@ namespace GogGalaxyCardViewer.Startup;
 
 public sealed class App : Application
 {
-    private readonly ImageScanner _imageScanner;
+    private readonly AssetScanner _assetScanner;
     private readonly StrongReferenceMessenger _messenger = StrongReferenceMessenger.Default;
 
     public App()
     {
         var dispatcher = Dispatcher.UIThread;
-        _imageScanner = new ImageScanner(_messenger, dispatcher);
+        _assetScanner = new AssetScanner(_messenger, dispatcher);
     }
 
     private MainWindow CreateWindow()
@@ -48,13 +48,13 @@ public sealed class App : Application
 
     private void HandleImageScannerStartRequest(object recipient, ImageScannerStartRequestMessage message)
     {
-        _imageScanner.Start();
+        _assetScanner.Start();
     }
 
     private void HandleImageScannerStopRequest(object recipient, ImageScannerStopRequestMessage message)
     {
-        _imageScanner.RequestStop();
-        _imageScanner.Join();
+        _assetScanner.RequestStop();
+        _assetScanner.Join();
     }
 
     private void HandleDesktopExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
