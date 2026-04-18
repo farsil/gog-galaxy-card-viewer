@@ -12,32 +12,32 @@ namespace GogGalaxyCardViewer.Main;
 public partial class MainWindowViewModel(IMessenger messenger, IDispatcher dispatcher, IAssetScanner assetScanner)
     : ObservableRecipient(messenger), IRecipient<VerticalCoverFoundMessage>
 {
-    private readonly List<string> _allImages = [];
-    private string? _currentFilter;
+    private readonly List<VerticalCover> _allCovers = [];
+    private string? _currentVendor;
 
-    public ObservableCollection<string> FilteredImages { get; private set; } = [];
+    public ObservableCollection<VerticalCover> FilteredCovers { get; private set; } = [];
 
     public void Receive(VerticalCoverFoundMessage message)
     {
-        _allImages.Add(message.VerticalCover.Path);
+        _allCovers.Add(message.VerticalCover);
 
         dispatcher.Post(() =>
         {
-            if (_currentFilter == null || message.VerticalCover.Path.Contains(_currentFilter))
-                FilteredImages.Add(message.VerticalCover.Path);
+            if (_currentVendor == null || message.VerticalCover.Vendor == _currentVendor)
+                FilteredCovers.Add(message.VerticalCover);
         }, DispatcherPriority.ContextIdle);
     }
 
     [RelayCommand]
     private void FilterImages(string? filter)
     {
-        _currentFilter = filter;
+        _currentVendor = filter;
 
-        FilteredImages = _currentFilter == null
-            ? new ObservableCollection<string>(_allImages)
-            : new ObservableCollection<string>(_allImages.Where(p => p.Contains(_currentFilter)));
+        FilteredCovers = _currentVendor == null
+            ? new ObservableCollection<VerticalCover>(_allCovers)
+            : new ObservableCollection<VerticalCover>(_allCovers.Where(p => p.Vendor == _currentVendor));
 
-        OnPropertyChanged(nameof(FilteredImages));
+        OnPropertyChanged(nameof(FilteredCovers));
     }
 
     protected override void OnActivated()

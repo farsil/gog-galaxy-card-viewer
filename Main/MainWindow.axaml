@@ -63,7 +63,7 @@
         <ScrollViewer x:Name="ScrollViewer"
                       VerticalScrollBarVisibility="Auto"
                       AllowAutoHide="False">
-            <ItemsControl HorizontalAlignment="Center" ItemsSource="{Binding FilteredImages}">
+            <ItemsControl HorizontalAlignment="Center" ItemsSource="{Binding FilteredCovers}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel x:Name="Panel"
@@ -77,8 +77,8 @@
                         <main:ImageWithPath MaxWidth="171"
                                             MaxHeight="241"
                                             PointerPressed="HandleImagePointerPressed"
-                                            Path="{Binding .}"
-                                            Source="{Binding ., Converter={StaticResource PathToImageConverter}}" />
+                                            Path="{Binding Path}"
+                                            Source="{Binding Path, Converter={StaticResource PathToImageConverter}}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
