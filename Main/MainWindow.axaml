@@ -21,43 +21,53 @@
                     Margin="0 0 0 24">
             <Button Content="All"
                     Padding="16 6"
+                    Click="HandleVendorButtonClick"
                     Command="{Binding FilterImagesCommand}"
                     CommandParameter="{x:Null}" />
             <Button Content="Epic"
                     Padding="16 6"
+                    Click="HandleVendorButtonClick"
                     Command="{Binding FilterImagesCommand}"
                     CommandParameter="epic" />
             <Button Content="Generic"
                     Padding="16 6"
+                    Click="HandleVendorButtonClick"
                     Command="{Binding FilterImagesCommand}"
                     CommandParameter="generic" />
             <Button Content="GOG"
                     Padding="16 6"
+                    Click="HandleVendorButtonClick"
                     Command="{Binding FilterImagesCommand}"
                     CommandParameter="gog" />
             <Button Content="Origin"
                     Padding="16 6"
+                    Click="HandleVendorButtonClick"
                     Command="{Binding FilterImagesCommand}"
                     CommandParameter="origin" />
             <Button Content="Steam"
                     Padding="16 6"
+                    Click="HandleVendorButtonClick"
                     Command="{Binding FilterImagesCommand}"
                     CommandParameter="steam" />
             <Button Content="Uplay"
                     Padding="16 6"
+                    Click="HandleVendorButtonClick"
                     Command="{Binding FilterImagesCommand}"
                     CommandParameter="uplay" />
             <Button Content="User"
                     Padding="16 6"
+                    Click="HandleVendorButtonClick"
                     Command="{Binding FilterImagesCommand}"
                     CommandParameter="user" />
         </StackPanel>
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
+        <ScrollViewer x:Name="ScrollViewer"
+                      VerticalScrollBarVisibility="Auto"
                       AllowAutoHide="False">
             <ItemsControl HorizontalAlignment="Center" ItemsSource="{Binding FilteredImages}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Margin="24 0 24 24"
+                        <WrapPanel x:Name="Panel"
+                                   Margin="24 0 24 24"
                                    LineSpacing="32"
                                    ItemSpacing="32" />
                     </ItemsPanelTemplate>

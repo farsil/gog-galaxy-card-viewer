@@ -44,4 +44,9 @@ public partial class MainWindow : Window
             Console.WriteLine("Unable to perform drag and drop: " + ex.Message);
         }
     }
+
+    private void HandleVendorButtonClick(object? sender, RoutedEventArgs e)
+    {
+        ScrollViewer.ScrollToHome();
+    }
 }
