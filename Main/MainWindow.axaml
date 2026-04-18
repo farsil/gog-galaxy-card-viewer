@@ -7,11 +7,6 @@
         x:Class="GogGalaxyCardViewer.Main.MainWindow"
         x:DataType="main:MainWindowViewModel"
         Title="GOG Galaxy Card Viewer">
-    <Window.Resources>
-        <ResourceDictionary>
-            <main:PathToImageConverter x:Key="PathToImageConverter" />
-        </ResourceDictionary>
-    </Window.Resources>
     <DockPanel>
         <main:SyntheticTitlebar DockPanel.Dock="Top" />
         <StackPanel DockPanel.Dock="Top"
@@ -77,8 +72,7 @@
                         <main:ImageWithPath MaxWidth="171"
                                             MaxHeight="241"
                                             PointerPressed="HandleImagePointerPressed"
-                                            Path="{Binding Path}"
-                                            Source="{Binding Path, Converter={StaticResource PathToImageConverter}}" />
+                                            Path="{Binding Path}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
