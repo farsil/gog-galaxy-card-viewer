@@ -1,6 +1,4 @@
-using System;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 
 namespace GogGalaxyCardViewer.Main;
@@ -24,25 +22,6 @@ public partial class MainWindow : Window
         base.OnUnloaded(e);
 
         if (DataContext is MainWindowViewModel vm) vm.IsActive = false;
-    }
-
-    private async void HandleImagePointerPressed(object? sender, PointerPressedEventArgs e)
-    {
-        try
-        {
-            if (sender is not ImageWithPath image) return;
-
-            var dragData = new DataTransfer();
-            var item = new DataTransferItem();
-            item.SetFile(await StorageProvider.TryGetFileFromPathAsync(new Uri(image.Path)));
-            dragData.Add(item);
-
-            await DragDrop.DoDragDropAsync(e, dragData, DragDropEffects.Copy);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Unable to perform drag and drop: " + ex.Message);
-        }
     }
 
     private void HandleVendorButtonClick(object? sender, RoutedEventArgs e)

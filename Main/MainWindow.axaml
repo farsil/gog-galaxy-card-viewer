@@ -71,7 +71,6 @@
                     <DataTemplate>
                         <main:ImageWithPath MaxWidth="171"
                                             MaxHeight="241"
-                                            PointerPressed="HandleImagePointerPressed"
                                             Path="{Binding Path}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
