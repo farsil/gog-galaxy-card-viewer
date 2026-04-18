@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia.Threading;
@@ -15,7 +16,18 @@ public partial class MainWindowViewModel(IMessenger messenger, IDispatcher dispa
     private readonly List<VerticalCover> _allCovers = [];
     private string? _currentVendor;
 
-    public ObservableCollection<VerticalCover> FilteredCovers { get; private set; } = [];
+    public ObservableCollection<VerticalCover> SearchResults { get; private set; } = [];
+
+    public string? SearchText
+    {
+        get;
+        set
+        {
+            if (field == value) return;
+            field = value;
+            UpdateSearchResults();
+        }
+    }
 
     public void Receive(VerticalCoverFoundMessage message)
     {
@@ -23,21 +35,30 @@ public partial class MainWindowViewModel(IMessenger messenger, IDispatcher dispa
 
         dispatcher.Post(() =>
         {
-            if (_currentVendor == null || message.VerticalCover.Vendor == _currentVendor)
-                FilteredCovers.Add(message.VerticalCover);
+            if (ShouldCoverBeInResults(message.VerticalCover))
+                SearchResults.Add(message.VerticalCover);
         }, DispatcherPriority.ContextIdle);
     }
 
-    [RelayCommand]
-    private void FilterImages(string? filter)
+    private bool ShouldCoverBeInResults(VerticalCover cover)
     {
-        _currentVendor = filter;
+        if (_currentVendor != null && cover.Vendor != _currentVendor) return false;
+        return SearchText == null ||
+               cover.GameTitle.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase);
+    }
 
-        FilteredCovers = _currentVendor == null
-            ? new ObservableCollection<VerticalCover>(_allCovers)
-            : new ObservableCollection<VerticalCover>(_allCovers.Where(p => p.Vendor == _currentVendor));
+    private void UpdateSearchResults()
+    {
+        SearchResults = new ObservableCollection<VerticalCover>(_allCovers.Where(ShouldCoverBeInResults).Take(100));
+        OnPropertyChanged(nameof(SearchResults));
+    }
 
-        OnPropertyChanged(nameof(FilteredCovers));
+    [RelayCommand]
+    private void FilterImagesByVendor(string? vendor)
+    {
+        if (vendor == _currentVendor) return;
+        _currentVendor = vendor;
+        UpdateSearchResults();
     }
 
     protected override void OnActivated()
