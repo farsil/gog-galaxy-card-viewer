@@ -12,7 +12,7 @@ public sealed class ImageWithPath : Image
     public static readonly StyledProperty<string> PathProperty =
         AvaloniaProperty.Register<ImageWithPath, string>(nameof(Path));
 
-    private static readonly BitmapCache Cache = new(400);
+    private static readonly BitmapCache Cache = new();
 
     public string Path
     {
@@ -48,24 +48,19 @@ public sealed class ImageWithPath : Image
         }
     }
 
-    private sealed class BitmapCache(int maxSize)
+    private sealed class BitmapCache
     {
-        private readonly Queue<string> _ageQueue = [];
-        private readonly Dictionary<string, Bitmap> _bitmaps = [];
+        private readonly Dictionary<string, WeakReference<Bitmap>> _bitmaps = [];
 
         public Bitmap Get(string path)
         {
-            if (!_bitmaps.ContainsKey(path))
-            {
-                // evict the oldest bitmap
-                if (_bitmaps.Count >= maxSize)
-                    _bitmaps.Remove(_ageQueue.Dequeue());
+            if (_bitmaps.TryGetValue(path, out var reference) && reference.TryGetTarget(out var bitmap))
+                return bitmap;
 
-                _bitmaps[path] = new Bitmap(path);
-                _ageQueue.Enqueue(path);
-            }
+            var newBitmap = new Bitmap(path);
+            _bitmaps[path] = new WeakReference<Bitmap>(newBitmap);
 
-            return _bitmaps[path];
+            return newBitmap;
         }
     }
 }
