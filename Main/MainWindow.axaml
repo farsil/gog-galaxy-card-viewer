@@ -11,19 +11,17 @@
         Height="800">
     <DockPanel>
         <main:SyntheticTitlebar DockPanel.Dock="Top" />
-        <main:ResultsText DockPanel.Dock="Top"
-                          HorizontalAlignment="Center"
-                          CurrentCount="{Binding SearchResults.Count}"
-                          MaxCount="{Binding AllSearchResultsCount}" />
         <TextBox DockPanel.Dock="Bottom"
                  Width="300"
                  HorizontalAlignment="Center"
                  Watermark="Search..."
                  Margin="24"
-                 Text="{Binding SearchText}" />
+                 Text="{Binding SearchText}"
+                 TextChanged="HandleSearchTextChanged" />
         <ScrollViewer x:Name="ScrollViewer"
                       VerticalScrollBarVisibility="Auto"
-                      AllowAutoHide="False">
+                      AllowAutoHide="False"
+                      ScrollChanged="HandleScrollViewerScrollChanged">
             <ItemsControl HorizontalAlignment="Center" ItemsSource="{Binding SearchResults}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

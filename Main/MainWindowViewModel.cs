@@ -12,11 +12,14 @@ namespace GogGalaxyCardViewer.Main;
 public class MainWindowViewModel(IMessenger messenger, IDispatcher dispatcher, IAssetScanner assetScanner)
     : ObservableRecipient(messenger), IRecipient<VerticalCoverFoundMessage>
 {
-    private const int SearchResultsMax = 100;
+    private const int SearchResultsDefaultCount = 100;
+    private const int SearchResultsCountIncrement = 25;
 
     private readonly List<VerticalCover> _allCovers = [];
 
     private List<VerticalCover> _allSearchResults = [];
+
+    private int _searchResultsMax = SearchResultsDefaultCount;
 
     public ObservableCollection<VerticalCover> SearchResults { get; private set; } = [];
 
@@ -30,15 +33,13 @@ public class MainWindowViewModel(IMessenger messenger, IDispatcher dispatcher, I
             if (field == value) return;
             field = value;
 
-            var allSearchResults = _allCovers.Where(ShouldBeInResults).ToList();
-
             dispatcher.Post(() =>
             {
                 _allSearchResults = _allCovers.Where(ShouldBeInResults).ToList();
                 OnPropertyChanged(nameof(AllSearchResultsCount));
 
-                SearchResults = new ObservableCollection<VerticalCover>(_allSearchResults.Take(SearchResultsMax));
-                OnPropertyChanged(nameof(SearchResults));
+                _searchResultsMax = SearchResultsDefaultCount;
+                RebuildSearchResults();
             }, DispatcherPriority.Background);
         }
     }
@@ -49,12 +50,27 @@ public class MainWindowViewModel(IMessenger messenger, IDispatcher dispatcher, I
 
         if (ShouldBeInResults(message.VerticalCover))
         {
-            if (SearchResults.Count < SearchResultsMax)
+            if (SearchResults.Count < _searchResultsMax)
                 SearchResults.Add(message.VerticalCover);
 
             _allSearchResults.Add(message.VerticalCover);
             OnPropertyChanged(nameof(AllSearchResultsCount));
         }
+    }
+
+    public void LoadMoreSearchResults()
+    {
+        dispatcher.Post(() =>
+        {
+            _searchResultsMax += SearchResultsCountIncrement;
+            RebuildSearchResults();
+        }, DispatcherPriority.Background);
+    }
+
+    private void RebuildSearchResults()
+    {
+        SearchResults = new ObservableCollection<VerticalCover>(_allSearchResults.Take(_searchResultsMax));
+        OnPropertyChanged(nameof(SearchResults));
     }
 
     private bool ShouldBeInResults(VerticalCover cover)
