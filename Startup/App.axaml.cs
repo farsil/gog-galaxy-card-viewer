@@ -19,6 +19,7 @@ public sealed class App : Application
         {
             DataContext = new MainWindowViewModel(
                 Messenger,
+                Dispatcher,
                 new AssetScanner(Messenger, Dispatcher)
             )
         };

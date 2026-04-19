@@ -12,7 +12,7 @@ public sealed class ImageWithPath : Image
     public static readonly StyledProperty<string> PathProperty =
         AvaloniaProperty.Register<ImageWithPath, string>(nameof(Path));
 
-    private static readonly Dictionary<string, Bitmap> Cache = [];
+    private static readonly BitmapCache Cache = new(400);
 
     public string Path
     {
@@ -20,16 +20,12 @@ public sealed class ImageWithPath : Image
         set => SetValue(PathProperty, value);
     }
 
-    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs e)
     {
-        base.OnPropertyChanged(change);
+        base.OnPropertyChanged(e);
 
-        if (change.Property == PathProperty)
-        {
-            if (!Cache.ContainsKey(Path))
-                Cache[Path] = new Bitmap(Path);
-            Source = Cache[Path];
-        }
+        if (e.Property == PathProperty)
+            Source = e.NewValue is string newValue ? Cache.Get(newValue) : null;
     }
 
     protected override async void OnPointerPressed(PointerPressedEventArgs e)
@@ -49,6 +45,27 @@ public sealed class ImageWithPath : Image
         catch (Exception ex)
         {
             Console.WriteLine("Unable to perform drag and drop: " + ex.Message);
+        }
+    }
+
+    private sealed class BitmapCache(int maxSize)
+    {
+        private readonly Queue<string> _ageQueue = [];
+        private readonly Dictionary<string, Bitmap> _bitmaps = [];
+
+        public Bitmap Get(string path)
+        {
+            if (!_bitmaps.ContainsKey(path))
+            {
+                // evict the oldest bitmap
+                if (_bitmaps.Count >= maxSize)
+                    _bitmaps.Remove(_ageQueue.Dequeue());
+
+                _bitmaps[path] = new Bitmap(path);
+                _ageQueue.Enqueue(path);
+            }
+
+            return _bitmaps[path];
         }
     }
 }

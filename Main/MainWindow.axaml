@@ -13,8 +13,8 @@
         <main:SyntheticTitlebar DockPanel.Dock="Top" />
         <main:ResultsText DockPanel.Dock="Top"
                           HorizontalAlignment="Center"
-                          CurrentCount="{Binding ActualResultsCount}"
-                          MaxCount="{Binding PossibleResultsCount}" />
+                          CurrentCount="{Binding SearchResults.Count}"
+                          MaxCount="{Binding AllSearchResultsCount}" />
         <TextBox DockPanel.Dock="Bottom"
                  Width="300"
                  HorizontalAlignment="Center"

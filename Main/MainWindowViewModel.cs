@@ -2,24 +2,25 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using GogGalaxyCardViewer.Scan;
 
 namespace GogGalaxyCardViewer.Main;
 
-public partial class MainWindowViewModel(IMessenger messenger, IAssetScanner assetScanner)
+public class MainWindowViewModel(IMessenger messenger, IDispatcher dispatcher, IAssetScanner assetScanner)
     : ObservableRecipient(messenger), IRecipient<VerticalCoverFoundMessage>
 {
     private const int SearchResultsMax = 100;
 
     private readonly List<VerticalCover> _allCovers = [];
 
+    private List<VerticalCover> _allSearchResults = [];
+
     public ObservableCollection<VerticalCover> SearchResults { get; private set; } = [];
 
-    [ObservableProperty] public partial int PossibleResultsCount { get; set; }
-
-    [ObservableProperty] public partial int ActualResultsCount { get; set; }
+    public int AllSearchResultsCount => _allSearchResults.Count;
 
     public string? SearchText
     {
@@ -31,11 +32,14 @@ public partial class MainWindowViewModel(IMessenger messenger, IAssetScanner ass
 
             var allSearchResults = _allCovers.Where(ShouldBeInResults).ToList();
 
-            SearchResults = new ObservableCollection<VerticalCover>(allSearchResults.Take(SearchResultsMax));
-            OnPropertyChanged(nameof(SearchResults));
+            dispatcher.Post(() =>
+            {
+                _allSearchResults = _allCovers.Where(ShouldBeInResults).ToList();
+                OnPropertyChanged(nameof(AllSearchResultsCount));
 
-            PossibleResultsCount = allSearchResults.Count;
-            ActualResultsCount = SearchResults.Count;
+                SearchResults = new ObservableCollection<VerticalCover>(_allSearchResults.Take(SearchResultsMax));
+                OnPropertyChanged(nameof(SearchResults));
+            }, DispatcherPriority.Background);
         }
     }
 
@@ -43,11 +47,14 @@ public partial class MainWindowViewModel(IMessenger messenger, IAssetScanner ass
     {
         _allCovers.Add(message.VerticalCover);
 
-        if (ShouldBeInResults(message.VerticalCover) && SearchResults.Count < SearchResultsMax)
-            SearchResults.Add(message.VerticalCover);
+        if (ShouldBeInResults(message.VerticalCover))
+        {
+            if (SearchResults.Count < SearchResultsMax)
+                SearchResults.Add(message.VerticalCover);
 
-        PossibleResultsCount = _allCovers.Count;
-        ActualResultsCount = SearchResults.Count;
+            _allSearchResults.Add(message.VerticalCover);
+            OnPropertyChanged(nameof(AllSearchResultsCount));
+        }
     }
 
     private bool ShouldBeInResults(VerticalCover cover)
